@@ -28,7 +28,7 @@ function wishMe() {
 }
 
 window.addEventListener('load', () => {
-    speak("जेएआरवीआईएस को आरंभ कर रहा हूँ..");
+    speak("बालवीर को उठा रहा हूं.....");
     wishMe();
 });
 
@@ -92,10 +92,13 @@ function takeCommand(message) {
         takeScreenshot();
     } else if (message.includes('camera')) {
         openCamera();
-    } else if (message.includes('play game')) {
+    }  else if (message.includes('play game')) {
         playGame();
     } else if (message.includes('quiz') || message.includes('brainstorming')) {
         startQuiz();
+    } else if (message.includes('play') && message.includes('song')) {
+        const song = message.replace("play", "").replace("song", "").trim();
+        playSong(song);
     } else {
         handleUnknownCommand(message);
     }
@@ -185,6 +188,30 @@ function displayJoke(joke) {
     jokesDiv.appendChild(jokeElement);
 }
 
+// Function to play a song on YouTube
+function playSong(song) {
+    const apiKey = 'AIzaSyBUdX_hvV5rvUvYuKDPqsUd_k1ZZdBf8Ag'; // Make sure to replace with your actual API key
+    const query = encodeURIComponent(song.trim());
+    
+    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${query}&key=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.items && data.items.length > 0) {
+                const videoId = data.items[0].id.videoId;
+                const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                window.open(videoUrl, "_blank");
+                speak(`${song} गीत चला रहा हूँ।`);
+            } else {
+                speak("मुझे यह गाना नहीं मिला।");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching YouTube data: ", error);
+            speak("मुझे गाना ढूंढने में समस्या हो रही है।");
+        });
+}
+
+
 function suggestRecipe() {
     const morningRecipes = [
         "पोहा",
@@ -192,6 +219,25 @@ function suggestRecipe() {
         "उपमा",
         "डोसा",
         "पराठा",
+        "पोहा", 
+        "उपमा", 
+        "दलिया", 
+        "इडली", 
+        "सेंवई उपमा",
+        "मूंग दाल चीला",
+        "ब्रेड और आमलेट", 
+        "साबूदाना खिचड़ी",
+        "अंडा भुर्जी",
+        "सैंडविच (सब्जी, पनीर)",
+        "बेसन का चीला", 
+        "पनीर भुर्जी",
+        "मखाना खीर", 
+        "कॉर्नफ्लेक्स और दूध",
+        "स्मूदी (फ्रूट और योगर्ट)",
+        "मूंग दाल का उपमा",
+        "ब्रेड पोहा", 
+        "नूडल्स (सब्जियों के साथ)",
+        "दलिया और दूध"
     ];
 
     const afternoonRecipes = [
@@ -200,6 +246,7 @@ function suggestRecipe() {
         "छोले भटूरे",
         "बिरयानी",
         "राजमा चावल",
+        "रोटी और सब्जी", "दाल चावल", "खिचड़ी", "पुलाव", "पनीर भुर्जी", "राजमा चावल", "चोलोरे चावल", "कढ़ी चावल", "मटर पनीर", "बिरयानी", "पास्ता", "मिक्स वेज", "पालक पनीर", "अंडा करी", "चपाती और रायता", "आलू पराठा", "गोभी पराठा", "भरवा पराठा", "चिकन करी", "सोया चाप"
     ];
 
     const eveningRecipes = [
@@ -208,6 +255,7 @@ function suggestRecipe() {
         "वड़ा पाव",
         "समोसा",
         "आलू टिक्की",
+        "पकौड़े", "सूप", "उपमा", "पोहा", "चिवड़ा", "फ्रूट चाट", "सैंडविच", "मसाला कॉर्न", "ढोकला", "बेसन का चीला", "मूंग दाल चीला", "पनीर टिक्का", "बटाटा वडा", "कटलेट", "भेलपुरी", "पाव भाजी", "पोहा कटलेट", "तवा पनीर", "मटर की कचौड़ी", "स्प्राउट्स चाट"
     ];
 
     const nightRecipes = [
@@ -216,6 +264,7 @@ function suggestRecipe() {
         "मटर पनीर",
         "छोले कुलचे",
         "बैंगन का भर्ता",
+        "रोटी और दाल", "चावल और सब्जी", "पुलाव और रायता", "रोटी और पनीर की सब्जी", "दाल मखनी और नान", "मसूर दाल और चावल", "राजमा चावल", "खिचड़ी और पापड़", "पनीर भुर्जी और पराठा", "कढ़ी चावल", "चपाती और मिक्स वेज", "आलू गोभी और रोटी", "चना मसाला और रोटी", "मटर पनीर और चावल", "पालक पनीर और रोटी", "सोया चाप और चावल", "भिंडी की सब्जी और रोटी", "बैंगन का भरता और रोटी", "चिकन करी और चावल", "फ्राइड राइस और मंचूरियन"
     ];
 
     const hour = new Date().getHours();
@@ -232,7 +281,7 @@ function suggestRecipe() {
     }
 
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-    speak(`आपके लिए ${randomRecipe} बनाने का सुझाव है।`);
+    speak(`आप इस समय स्वादिष्ट ${randomRecipe} बना कर मजे से खा सकते हैं। अगर बनाने नहीं आता तो मुझसे पूछे में आपको बताऊंगी।`);
     displayRecipe(randomRecipe);
 }
 
