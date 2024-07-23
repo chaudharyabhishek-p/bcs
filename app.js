@@ -59,7 +59,7 @@ function takeCommand(message) {
     } else if (message.includes("open facebook")) {
         window.open("https://facebook.com", "_blank");
         speak("फेसबुक खोल रहा हूँ...");
-    } else if (message.includes('what is') || message.includes('who is') || message.includes('what are')) {
+    } else if (message.includes('what is') || message.includes('who is') || message.includes('how to') || message.includes('kaise') || message.includes('kya hai') || message.includes('what are')) {
         window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
         const finalText = "यहां इंटरनेट पर " + message + " के बारे में मिली जानकारी है।";
         speak(finalText);
